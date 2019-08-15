@@ -104,12 +104,17 @@ class DetailView(View):
             # 添加用户的历史记录
             conn = get_redis_connection('default')
             history_key = 'history_%d' % user.id
+
             # 移除列表中的goods_id
             conn.lrem(history_key, 0, goods_id)
             # 把goods_id插入到列表的左侧
             conn.lpush(history_key, goods_id)
-            # 只保存用户最新浏览的5条信息
-            conn.ltrim(history_key, 0, 4)
+
+            # 获取历史浏览记录列表长度
+            history_count = conn.llen(history_key)
+            # 历史纪录最多保存7条-通过缓冲空间2和查询长度操作来换del操作
+            if history_count > 7:
+                conn.ltrim(history_key, 0, 4)
 
         # 组织模版上下文
         context = {'sku': sku, 'types': types,
