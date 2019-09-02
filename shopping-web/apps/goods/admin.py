@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.core.cache import cache
-from apps.goods.models import GoodsType, IndexPromotionBanner, IndexGoodsBanner, IndexTypeGoodsBanner, Goods, GoodsSKU
+from apps.goods.models import GoodsType, IndexPromotionBanner, IndexGoodsBanner, Goods, GoodsSKU, IndexTypeGoodsBanner
 # Register your models here.
 
+#django 管理类
 
 class BaseModelAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):

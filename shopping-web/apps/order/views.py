@@ -109,7 +109,7 @@ class OrderCommitView1(View):
 
         # 校验地址
         try:
-            addr = Address.objects.get(id=addr_id)
+            addr = Address.objects.get(address_id=addr_id)
         except Address.DoesNotExist:
             return JsonResponse({'res': 3, 'errmsg': '非法地址'})
 
@@ -222,7 +222,7 @@ class OrderCommitView(View):
 
         # 校验地址
         try:
-            addr = Address.objects.get(id=addr_id)
+            addr = Address.objects.get(address_id=addr_id)
         except Address.DoesNotExist:
             return JsonResponse({'res': 3, 'errmsg': '非法地址'})
 
@@ -431,7 +431,6 @@ class CheckPayView(View):
         # alipay初始化
         app_private_key_string = open("apps/order/app_private_key.pem").read()
         alipay_public_key_string = open("apps/order/alipay_public_key.pem").read()
-
         # app_private_key_string == """
         #     -----BEGIN RSA PRIVATE KEY-----
         #     base64 encoded content
@@ -443,10 +442,8 @@ class CheckPayView(View):
         #     base64 encoded content
         #     -----END PUBLIC KEY-----
         # """
-
         # app_private_key_string = os.path.join(settings.BASE_DIR, 'apps/order/app_private_key.pem')
         # alipay_public_key_string = os.path.join(settings.BASE_DIR, 'apps/order/alipay_public_key.pem')
-
         alipay = AliPay(
             appid="2016092700608687",  # 应用id
             app_notify_url=None,  # 默认回调url
@@ -456,11 +453,9 @@ class CheckPayView(View):
             sign_type="RSA2",  # RSA 或者 RSA2
             debug=True  # 默认False, 此处沙箱模拟True
         )
-
         # 调用支付宝的交易查询接口
         while True:
             response = alipay.api_alipay_trade_query(order_id)
-
             # response = {
             # "trade_no": "2017032121001004070200176844",  # 支付宝交易号
             # "code": "10000",  # 接口调用成功
@@ -483,10 +478,8 @@ class CheckPayView(View):
             # "trade_status": "TRADE_SUCCESS",  # 支付结果
             # "total_amount": "20.00"
             # }
-
             code = response.get('code')
-
-            if code == '10000' and response.get('trade_status') == 'TRADE_SUCCESS':
+            if code == '10000':# and response.get('trade_status') == 'TRADE_SUCCESS':
                 # 支付成功
                 # 获取支付宝交易号
                 trade_no = response.get('trade_no')
@@ -504,6 +497,7 @@ class CheckPayView(View):
             else:
                 # 支付出错
                 return JsonResponse({'res': 4, 'errmsg': '支付失败'})
+        return JsonResponse({'res': 3, 'message': '支付成功'})
 
 
 class OrderCommentView(LoginRequiredMixin, View):

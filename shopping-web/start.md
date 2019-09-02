@@ -44,7 +44,7 @@ keys * hgetall cart_2
 开启worker,     (退出 deactivate)     
 workon df-env    
 
-在项目目录下执行：cd /opt/dailyfresh-celerytasks    
+在项目目录下执行： 
 ```celery -A celery_tasks.tasks worker -Q queue --loglevel=info```     
 或     
 ```celery -A celery_tasks.tasks worker --loglevel=info ```    

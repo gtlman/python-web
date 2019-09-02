@@ -19,7 +19,7 @@ monotonic==1.5
 mutagen==1.42.0
 Pillow==5.4.1
 pycryptodomex==3.7.2
-PyMySQL==0.9.3
+#PyMySQL==0.9.3
 python-alipay-sdk==1.10.0
 pytz==2018.9
 redis==3.2.0

@@ -28,20 +28,20 @@ class IndexView(View):
             # 查询商品的分类信息
             types = GoodsType.objects.all()
             # 获取首页轮播的商品的信息
-            index_banner = IndexGoodsBanner.objects.all().order_by('index')
+            index_banner = IndexGoodsBanner.objects.all()#.order_by('index')
             # 获取首页促销的活动信息
-            promotion_banner = IndexPromotionBanner.objects.all().order_by('index')
+            promotion_banner = IndexPromotionBanner.objects.all()#.order_by('index')
 
-            # 获取首页分类商品信息展示
+             获取首页分类商品信息展示
             for type in types:
                 # 查询首页显示的type类型的文字商品信息
-                title_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=0).order_by('index')
+                title_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=0)#.order_by('index')
                 # 查询首页显示的图片商品信息
-                image_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=1).order_by('index')
+                image_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=1)#.order_by('index')
                 # 动态给type对象添加两个属性保存数据
                 type.title_banner = title_banner
                 type.image_banner = image_banner
-
+#
             # 组织上下文
             context = {
                 'types': types,

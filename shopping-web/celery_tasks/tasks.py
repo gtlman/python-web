@@ -16,7 +16,7 @@ from apps.goods.models import GoodsType, IndexGoodsBanner, IndexPromotionBanner,
 
 
 # 创建一个Celery类的实例对象
-app = Celery('celery_tasks.tasks', broker='redis://192.168.229.130:6379/8')
+app = Celery('celery_tasks.tasks', broker='redis://192.168.126.135:6379/8')
 
 
 # 定义任务函数
@@ -24,11 +24,11 @@ app = Celery('celery_tasks.tasks', broker='redis://192.168.229.130:6379/8')
 def send_register_active_email(to_email, username, token):
     """发送激活邮件"""
     # 组织邮件信息
-    subject = '天天生鲜欢迎信息'
+    subject = 'shopping-web欢迎信息'
     message = ''
     sender = settings.EMAIL_PROM  # 发送人
     receiver = [to_email]
-    html_message = '<h1>%s, 欢迎您成为天天生鲜注册会员</h1>请点击下面链接激活您的账户<br/><a href="http://127.0.0.1:8000/user/active/%s">http://127.0.0.1:8000/user/active/%s</a>' % (username, token, token)
+    html_message = '<h1>%s, 欢迎您成为shopping-web注册会员</h1>请点击下面链接激活您的账户<br/><a href="http://192.168.126.133:80/user/active/%s">http://192.168.126.133:80/user/active/%s</a>' % (username, token, token)
 
     send_mail(subject, message, sender, receiver, html_message=html_message)
     # time.sleep(5)
@@ -40,16 +40,16 @@ def generate_static_index_html():
     # 查询商品的种类信息
     types = GoodsType.objects.all()
     # 获取首页轮播的商品的信息
-    index_banner = IndexGoodsBanner.objects.all().order_by('index')
+    index_banner = IndexGoodsBanner.objects.all()#.order_by('index')
     # 获取首页促销的活动信息
-    promotion_banner = IndexPromotionBanner.objects.all().order_by('index')
+    promotion_banner = IndexPromotionBanner.objects.all()#.order_by('index')
 
     # 获取首页分类商品信息展示
     for type in types:
         # 查询首页显示的type类型的文字商品信息
-        title_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=0).order_by('index')
+        title_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=0)#.order_by('index')
         # 查询首页显示的图片商品信息
-        image_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=1).order_by('index')
+        image_banner = IndexTypeGoodsBanner.objects.filter(type=type, display_type=1)#.order_by('index')
         # 动态给type对象添加两个属性保存数据
         type.title_banner = title_banner
         type.image_banner = image_banner

@@ -1,4 +1,4 @@
-# -*-coding:utf-8-*-
+    # -*-coding:utf-8-*-
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -22,48 +22,47 @@ import time
 
 
 # /user/register
-def register(request):
-    """注册"""
-    if request.method == 'GET':
-        return render(request, 'df_user/register.html')  # 显示注册页面
-    else:
-        # 进行注册处理
-        # 接收数据
-        username = request.POST.get('user_name')
-        password = request.POST.get('pwd')
-        email = request.POST.get('email')
-        allow = request.POST.get('allow')
-
-        # 进行数据校验
-        if not all([username, password, email]):
-            # 数据不完整
-            return render(request, 'df_user/register.html', {'errmsg': '数据不完整'})
-
-        # 检验邮箱
-        if not re.match(r'^[a-z0-9][\w.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
-            return render(request, 'df_user/register.html', {'errmsg': '邮箱格式不正确'})
-
-        if allow != 'on':
-            return render(request, 'df_user/register.html', {'errmsg': '请同意协议'})
-
-        # 校验用户是否重复
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            # 用户名不存在
-            user = None
-
-        if user:
-            return render(request, 'df_user/register.html', {'errmsg': '用户已存在'})
-
-        # 进行业务处理：进行用户注册
-        user = User.objects.create_user(username, email, password)
-        user.is_active = 0
-        user.save()
-
-        # 返回应答,跳转首页
-        return redirect(reverse('goods:index'))
-
+#def register(request):
+#    """注册"""
+#    if request.method == 'GET':
+#        return render(request, 'df_user/register.html')  # 显示注册页面
+#    else:
+#        # 进行注册处理
+#        # 接收数据
+#        username = request.POST.get('user_name')
+#        password = request.POST.get('pwd')
+#        email = request.POST.get('email')
+#        allow = request.POST.get('allow')
+#
+#        # 进行数据校验
+#        if not all([username, password, email]):
+#            # 数据不完整
+#            return render(request, 'df_user/register.html', {'errmsg': '数据不完整'})
+#
+#        # 检验邮箱
+#        if not re.match(r'^[a-z0-9][\w.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+#            return render(request, 'df_user/register.html', {'errmsg': '邮箱格式不正确'})
+#
+#        if allow != 'on':
+#            return render(request, 'df_user/register.html', {'errmsg': '请同意协议'})
+#
+#        # 校验用户是否重复
+#        try:
+#            user = User.objects.get(username=username)
+#        except User.DoesNotExist:
+#            # 用户名不存在
+#            user = None
+#
+#        if user:
+#            return render(request, 'df_user/register.html', {'errmsg': '用户已存在'})
+#
+#        # 进行业务处理：进行用户注册
+#        user = User.objects.create_user(username, email, password)
+#        user.is_active = 0
+#        user.save()
+#
+#        # 返回应答,跳转首页
+#        return redirect(reverse('goods:index'))
 
 class RegisterView(View):
     """注册"""
@@ -233,7 +232,11 @@ class UserInfoView(LoginRequiredMixin, View):
     def get(self, request):
         # 获取个人信息
         user = request.user
-        address = Address.objects.get_default_address(user)
+        address_id = user.default_address
+        if address_id:
+            address = Address.objects.get(address_id)
+        else:
+            address = None
 
         # 获取用户的历史浏览记录
         # from redis import StrictRedis
@@ -344,16 +347,18 @@ class AddressView(LoginRequiredMixin, View):
         #     address = Address.objects.get(user=user, is_default=True)
         # except Address.DoesNotExist:
         #     address = None  # 不存在默认地址
-        address = Address.objects.get_default_address(user)
 
-        return render(request, 'df_user/user_center_site.html', {'title': '用户中心-收货地址', 'page': 'address', 'address': address})
+        # 这里应该用fliter获取地址列表才对吧
+        address_list = Address.objects.filter(user=user)
+
+        return render(request, 'df_user/user_center_site.html', {'title': '用户中心-收货地址', 'page': 'address', 'address_list': address_list})
 
     def post(self, request):
         # 地址添加
         receiver = request.POST.get('receiver')
         addr = request.POST.get('addr')
-        zip_code = request.POST.get('zip_code')
         phone = request.POST.get('phone')
+        is_default = request.POST.get('default_address')
 
         # 业务处理：地址添加
         # 如果用户没存在默认地址，则添加的地址作为默认收获地址
@@ -363,12 +368,6 @@ class AddressView(LoginRequiredMixin, View):
         #     address = Address.objects.get(user=user, is_default=True)
         # except Address.DoesNotExist:
         #     address = None  # 不存在默认地址
-        address = Address.objects.get_default_address(user)
-
-        if address:
-            is_default = False
-        else:
-            is_default = True
 
         # 数据校验
         if not all([receiver, addr, phone]):
@@ -385,12 +384,25 @@ class AddressView(LoginRequiredMixin, View):
                            'errmsg': '手机号格式不合法'})
 
         # 添加
-        Address.objects.create(user=user,
+        #Address.objects.create(user=user,
+        #                       receiver=receiver,
+        #                       addr=addr,
+        #                       zip_code=zip_code,
+        #                       phone=phone,
+        #                       is_default=is_default)
+        #修改模型
+        
+        address = Address.objects.update_or_create(user=user,
                                receiver=receiver,
                                addr=addr,
-                               zip_code=zip_code,
-                               phone=phone,
-                               is_default=is_default)
+                               phone=phone)
+
+        address_id = user.default_address
+        #如果是第一次添加地址 或者 在添加地址时勾选了默认地址的话则会设置为默认地址
+        if not address_id or is_default=='True':
+            user.default_address = address
+            user.save()
+
 
         # 返回应答
         return redirect(reverse('user:address'))  # get的请求方式
