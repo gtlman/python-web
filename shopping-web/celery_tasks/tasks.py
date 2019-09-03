@@ -9,7 +9,7 @@ import time
 # django环境的初始化，在任务处理者worker一端加以下几句
 import os
 # import django
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dailyfresh.settings')
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shopping.settings')
 # django.setup()
 
 from apps.goods.models import GoodsType, IndexGoodsBanner, IndexPromotionBanner, IndexTypeGoodsBanner

@@ -47,7 +47,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'dailyfresh.urls'
+ROOT_URLCONF = 'shopping.urls'
 
 TEMPLATES = [
     {
@@ -65,7 +65,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dailyfresh.wsgi.application'
+WSGI_APPLICATION = 'shopping.wsgi.application'
 
 
 # Database
@@ -124,7 +124,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # 指定收集静态文件的路径
-# STATIC_ROOT = 'var/www/dailyfresh/static'
+# STATIC_ROOT = 'var/www/shopping/static'
 
 # 富文本编辑器配置
 TINYMCE_DEFAULT_CONFIG = {
