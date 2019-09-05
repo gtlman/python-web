@@ -14,11 +14,11 @@
 ## 技术架构
 - 开发架构
 
-![开发架构.png](pics/framework.png ,"开发架构.png")
+![开发架构.png](pics/framework.png)
 
 - 部署架构
 
-![部署架构.png](pics/deploy.png ,"部署架构.png")
+![部署架构.png](pics/deploy.png)
 
 
 ## 主题模块
@@ -28,4 +28,4 @@
 - 订单模块
 
 ## 数据库设计
-![数据库设计.png](pics/database.png ,"数据库设计.png")
+![数据库设计.png](pics/database.png)
